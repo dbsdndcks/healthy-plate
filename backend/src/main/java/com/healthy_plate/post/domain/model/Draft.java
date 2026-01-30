@@ -43,10 +43,12 @@ public class Draft {
     @Column(name = "thumbnail_image_url")
     private String thumbnailImageUrl;
 
+    private Draft(final Long writerId) {
+        this.writerId = writerId;
+    }
+
     public static Draft createByWriter(final Long writerId) {
-        final Draft draft = new Draft();
-        draft.writerId = writerId;
-        return draft;
+        return new Draft(writerId);
     }
 
     public void addImage(final PostImage image) {
