@@ -35,20 +35,12 @@ public class PostImage {
     @Column(name = "s3_key")
     private String s3Key;
 
-    @Column(name = "original_name")
-    private String originalName;
-
-    @Column(name = "file_size")
-    private Long fileSize;
-
-    private PostImage(final String s3Key, final String originalName, final Long fileSize) {
+    private PostImage(final String s3Key) {
         this.s3Key = s3Key;
-        this.originalName = originalName;
-        this.fileSize = fileSize;
     }
 
-    public static PostImage create(final String s3Key, final String originalName, final Long fileSize) {
-        return new PostImage(s3Key, originalName, fileSize);
+    public static PostImage create(final String s3Key) {
+        return new PostImage(s3Key);
     }
 
     public void assignToDraft(final Draft draft) {
