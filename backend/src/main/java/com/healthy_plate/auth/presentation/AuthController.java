@@ -59,7 +59,7 @@ public class AuthController implements SwaggerAuthController {
         return ResponseEntity.ok(new TokenResponse(newAccessToken));
     }
 
-    @PostMapping("/profile-image/presigned-url")
+    @PostMapping("/profile/image")
     public ResponseEntity<PresignedUrlResponse> getPresignedUrl(
         @Valid @RequestBody final PresignedUrlRequest request,
         final HttpServletRequest httpRequest

@@ -40,7 +40,7 @@ public class UserController implements SwaggerUserController {
         return ResponseEntity.ok(duplicated);
     }
 
-    @PostMapping("/profile-image/presigned-url")
+    @PostMapping("/profile/image")
     public ResponseEntity<PresignedUrlResponse> getPresignedUrl(
         @AuthenticationPrincipal final Long userId,
         @Valid @RequestBody final PresignedUrlRequest request
