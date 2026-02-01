@@ -67,8 +67,8 @@ public class AuthController implements SwaggerAuthController {
         final String refreshToken = CookieUtil.findRefreshTokenWithCookie(httpRequest.getCookies());
         final User user = authService.getUserFromRefreshToken(refreshToken);
 
-        final PresignedUrlResponse response = s3FileUploadService.getPreSignedUrl(
-            String.valueOf(user.getId()),
+        final PresignedUrlResponse response = s3FileUploadService.getProfileImagePreSignedUrl(
+            user.getId(),
             AllowedImageType.fromContentType(request.contentType()),
             request.fileSize()
         );
