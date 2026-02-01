@@ -29,6 +29,9 @@ public class S3FileUploadService {
     @Value("${spring.cloud.aws.s3.folders.profile}")
     private String profileFolder;
 
+    @Value("${spring.cloud.aws.s3.folders.post}")
+    private String postFolder;
+
     @Value("${spring.cloud.aws.region.static}")
     private String region;
 
@@ -37,12 +40,16 @@ public class S3FileUploadService {
     private final S3Client s3Client;
 
 
-    //Presigned URL을 생성합니다.
-    public PresignedUrlResponse getPreSignedUrl(final String userId, final AllowedImageType imageType, final Long fileSize) {
+    //Presigned URL을 생성합니다. (프로필 이미지용)
+    public PresignedUrlResponse getProfileImagePreSignedUrl(
+        final String userId,
+        final AllowedImageType imageType,
+        final Long fileSize
+    ) {
         validateFile(fileSize);
 
-        final String hashedPrefix = HashConverter.convertToHash(userId);
-        final String key = profileFolder + hashedPrefix + "/" + UUID.randomUUID() + "." + imageType.getExtension();
+        final String hashedId = HashConverter.convertToHash(userId);
+        final String key = profileFolder + hashedId + "/" + UUID.randomUUID() + "." + imageType.getExtension();
 
         final PutObjectRequest putObjectRequest = PutObjectRequest.builder()
             .bucket(bucketName)
@@ -57,9 +64,40 @@ public class S3FileUploadService {
 
         final PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(presignRequest);
 
-        final String fileUrl = String.format("https://%s.s3.%s.healthy-plate/%s", bucketName, region, key);
+        final String fileUrl = String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, key);
 
         log.info("Generated presigned URL for key: {}", key);
+        return new PresignedUrlResponse(presignedRequest.url().toString(), fileUrl);
+    }
+
+    //Presigned URL을 생성합니다. (포스트 이미지용)
+    public PresignedUrlResponse getPostImagePreSignedUrl(
+        final String userId,
+        final String resourceId,
+        final AllowedImageType imageType,
+        final Long fileSize
+    ) {
+        validateFile(fileSize);
+
+        final String hashedId = HashConverter.convertToHash(userId);
+        final String key = postFolder + hashedId + "/" + resourceId + "/" + UUID.randomUUID() + "." + imageType.getExtension();
+
+        final PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+            .bucket(bucketName)
+            .key(key)
+            .contentType(imageType.getContentType())
+            .build();
+
+        final PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
+            .putObjectRequest(putObjectRequest)
+            .signatureDuration(Duration.ofMinutes(10))
+            .build();
+
+        final PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(presignRequest);
+
+        final String fileUrl = String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, key);
+
+        log.info("Generated presigned URL for post image key: {}", key);
         return new PresignedUrlResponse(presignedRequest.url().toString(), fileUrl);
     }
 

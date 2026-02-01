@@ -2,6 +2,7 @@ package com.healthy_plate.post.domain.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,15 +33,20 @@ public class PostImage {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @Column(name = "s3_key")
+    @Column(name = "s3_key", nullable = false)
     private String s3Key;
 
-    private PostImage(final String s3Key) {
+    @Enumerated
+    @Column(nullable = false)
+    private ImageStatus imageStatus;
+
+    private PostImage(final String s3Key, final ImageStatus imageStatus) {
         this.s3Key = s3Key;
+        this.imageStatus = imageStatus;
     }
 
-    public static PostImage create(final String s3Key) {
-        return new PostImage(s3Key);
+    public static PostImage create(final String s3Key, final ImageStatus imageStatus) {
+        return new PostImage(s3Key, imageStatus);
     }
 
     public void assignToDraft(final Draft draft) {

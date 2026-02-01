@@ -58,6 +58,6 @@ public class Post extends BaseEntity {
 
     public void addImage(final PostImage image) {
         postImages.add(image);
-        image.assignPost(this);
+        image.assignToPost(this);
     }
 }

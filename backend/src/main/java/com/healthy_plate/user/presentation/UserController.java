@@ -46,7 +46,7 @@ public class UserController implements SwaggerUserController {
         @Valid @RequestBody final PresignedUrlRequest request
     ) {
         final PresignedUrlResponse response = s3FileUploadService.getProfileImagePreSignedUrl(
-            userId,
+            String.valueOf(userId),
             AllowedImageType.fromContentType(request.contentType()),
             request.fileSize()
         );
